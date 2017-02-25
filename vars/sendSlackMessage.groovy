@@ -1,9 +1,9 @@
 def call(msg, color, channel, domain, credentialsId) {
 
-  def msg = config.msg ?: '',
-  def color = config.color ?: 'good',
-  def channel = config.channel ?: '',
-  def domain = config.domain ?: '',
+  def msg = config.msg ?: ''
+  def color = config.color ?: 'good'
+  def channel = config.channel ?: ''
+  def domain = config.domain ?: ''
   def credentialsId = config.credentialsId ?: 'slack-integration-token'
 
   try {
