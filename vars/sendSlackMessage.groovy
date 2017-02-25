@@ -1,4 +1,4 @@
-def call(msg = '', color = 'good', channel = '', domain = '', credentialsId = 'slack-integration-token') {
+def call(msg = '', channel = '', domain = '', color = 'good', credentialsId = 'slack-integration-token') {
 
   try {
     slackSend channel: channel, color: color, message: msg, teamDomain: domain, tokenCredentialId: credentialsId
