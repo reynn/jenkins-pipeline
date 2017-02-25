@@ -7,7 +7,7 @@ def call(body) {
 
   def msg = config.msg ?: '',
   def msgColor = config.msgColor ?: 'good',
-  def credentialsId = config.credentialsId ?: '29731667-bfb1-433d-8dc1-f76d2a69c226'
+  def credentialsId = config.credentialsId ?: 'slack-integration-token'
 
   slackSend message: msg, color: msgColor, tokenCredentialId: credentialsId
 }
