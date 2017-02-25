@@ -1,10 +1,4 @@
-def call(msg, color, channel, domain, credentialsId) {
-
-  msg = config.msg ?: ''
-  color = config.color ?: 'good'
-  channel = config.channel ?: ''
-  domain = config.domain ?: ''
-  credentialsId = config.credentialsId ?: 'slack-integration-token'
+def call(msg = '', color = 'good', channel = '', domain = '', credentialsId = 'slack-integration-token') {
 
   try {
     slackSend message: msg, color: color, channel: channel, domain: domain, tokenCredentialId: credentialsId
