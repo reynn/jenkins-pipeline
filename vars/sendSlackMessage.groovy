@@ -1,7 +1,7 @@
 def call(msg = '', color = 'good', channel = '', domain = '', credentialsId = 'slack-integration-token') {
 
   try {
-    slackSend message: msg, color: color, channel: channel, domain: domain, tokenCredentialId: credentialsId
+    slackSend channel: channel, color: color, message: msg, teamDomain: domain, tokenCredentialId: credentialsId
   } catch (java.lang.NoSuchMethodError nsme) {
     println "Slack plugin does not appear to be installed on this Jenkins server."
   } catch (Exception e) {
