@@ -128,6 +128,10 @@ def isDebug() {
   return env.DebugMode?.toBoolean() ?: false
 }
 
+def centerPrint(text, length=120, ch='#') = {
+  println " ${text} ".center(length, ch)
+}
+
 // only print message if we are currently in debug mode
 def debugPrint(title, msgdata, debugMode=null) {
   if (debugMode == null) {
