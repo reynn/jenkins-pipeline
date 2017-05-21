@@ -128,7 +128,7 @@ def isDebug() {
   return env.DebugMode?.toBoolean() ?: false
 }
 
-def centerPrint(text, length=120, ch='#') = {
+def centerPrint(text, length=120, ch='#') {
   println " ${text} ".center(length, ch)
 }
 
