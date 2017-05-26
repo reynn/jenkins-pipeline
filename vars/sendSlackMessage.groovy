@@ -1,5 +1,4 @@
 def call(msg = '', channel = '', domain = '', color = 'good', credentialsId = 'slack-integration-token') {
-
   try {
     slackSend channel: channel, color: color, message: msg, teamDomain: domain, tokenCredentialId: credentialsId
   } catch (java.lang.NoSuchMethodError nsme) {
@@ -10,5 +9,4 @@ def call(msg = '', channel = '', domain = '', color = 'good', credentialsId = 's
     println e
     println "End exception details -------------------"
   }
-
 }

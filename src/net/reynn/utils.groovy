@@ -1,12 +1,14 @@
 package net.reynn
 
-import jenkins.model.*
+import jenkins.model.*;
 import com.cloudbees.hudson.plugins.folder.*;
 import com.cloudbees.hudson.plugins.folder.properties.*;
 import com.cloudbees.hudson.plugins.folder.properties.FolderCredentialsProvider.FolderCredentialsProperty;
-import com.cloudbees.plugins.credentials.impl.*;
 import com.cloudbees.plugins.credentials.*;
 import com.cloudbees.plugins.credentials.domains.*;
+import com.cloudbees.plugins.credentials.impl.*;
+import com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey;
+import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl;
 
 // ########################
 // # Credential Utils
@@ -122,6 +124,89 @@ def getCredentialsWithCriteria(criteria) {
   assert credential.id : "Invalid credentials. The id property of your credential is blank or corrupted."
   // Return the credentials
   return credential
+}
+
+def addCredentials(folderName, type, credentialData) {
+  def folder = findFolder(folderName)
+  assert folder : "Specified folder not found"
+
+  def credId = java.util.UUID.randomUUID().toString()
+  Credentials cred = null
+  switch(type) {
+    case 'ssh':
+      cred = (Credentials)new BasicSSHUserPrivateKey(
+        CredentialsScope.GLOBAL,
+        credId,
+        credentialData?.username,
+        credentialData?.privateKeySource,
+        credentialData?.passphrase,
+        credentialData?.description)
+    break;
+    case 'usernamePassword':
+      cred = (Credentials)new UsernamePasswordCredentialsImpl(
+        CredentialsScope.GLOBAL,
+        credId,
+        credentialData?.description,
+        credentialData?.username,
+        credentialData?.password)
+    break;
+    case 'secretText':
+      cred = (Credentials)new StringCredentialsImpl(
+        CredentialsScope.GLOBAL,
+        credId,
+        credentialData?.description,
+        new hudson.util.Secret(credentialData?.secret) )
+    break;
+  }
+  assert cred : "Unable to create credential based on data provided"
+  def credProperty = getFolderCredentialProperty(folder)
+  credProperty.getStore().addCredentials(Domain.global(), cred)
+}
+
+def getFolderCredentialProperty(folder) {
+  def property = folder.getProperties().get(FolderCredentialsProperty.class)
+  if(!property) {
+    println "Initialize Folder Credentials store and add credentials in global store"
+    property = new FolderCredentialsProperty()
+    folder.addProperty(property)
+  }
+  return property
+}
+
+def findFolder(folderName) {
+  println "Finding folder: ${folderName}"
+  def retFolder = null
+  def parent = null
+  def name = null
+  if (folderName.contains('/')) {
+    println "findFolder :: splitFolderName :: ${folderName}"
+    def nameSplit = folderName.split('/')
+    parent = nameSplit[0]
+    name = nameSplit[1]
+    println "FolderSplit(${nameSplit})"
+  } else {
+    println "findFolder :: noSplitFolderName :: ${folderName}"
+    name = folderName
+  }
+  for (folder in Jenkins.getInstance().getAllItems(Folder.class)) {
+    if (folder.name.equals(name)) {
+      println "findFolder :: nameMatch :: ${folder.name}"
+      if (parent) {
+        if (parent instanceof com.cloudbees.hudson.plugins.folder.Folder && parent.name.equals(parent)) {
+          println "findFolder :: parentMatch :: ${folder.name}"
+          return folder
+        } else {
+          println "findFolder :: noParentMatch :: ${folder.name}"
+        }
+      } else {
+        println "findFolder :: noParent :: ${folder.name}"
+        return folder
+      }
+    } else {
+      println "findFolder :: noMatch :: ${folder.name}"
+    }
+  }
+  return retFolder
 }
 
 def isDebug() {
