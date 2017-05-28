@@ -237,7 +237,7 @@ def debugPrint(title, msgdata, debugMode=null) {
 
 def getBuildCause(causeClass) {
   if (causeClass) {
-    return currentBuild.rawBuild.getCauses(causeClass)
+    return currentBuild.rawBuild.getCause(causeClass)
   } else {
     return currentBuild.rawBuild.getCauses()
   }
