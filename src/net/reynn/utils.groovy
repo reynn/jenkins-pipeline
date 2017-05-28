@@ -243,6 +243,10 @@ def getBuildCause(causeClass) {
   }
 }
 
+def getUpstreamJobName(upstreamCause) {
+  return upstreamCause.getUpstreamProject()
+}
+
 def parseJSON(content) {
   assert content : "parseJSON :: Unable to parse empty content."
   def json = readJSON text: content
