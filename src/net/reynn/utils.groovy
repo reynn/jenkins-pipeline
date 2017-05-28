@@ -235,8 +235,12 @@ def debugPrint(title, msgdata, debugMode=null) {
   }
 }
 
-def getBuildCause() {
-  return currentBuild.rawBuild.getCauses()
+def getBuildCause(causeClass) {
+  if (causeClass) {
+    return currentBuild.rawBuild.getCauses(causeClass)
+  } else {
+    return currentBuild.rawBuild.getCauses()
+  }
 }
 
 def parseJSON(content) {
