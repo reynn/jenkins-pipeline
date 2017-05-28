@@ -243,7 +243,10 @@ def getBuildCause(causeClass) {
   }
 }
 
-def getUpstreamJobName(upstreamCause) {
+def getUpstreamJobName(upstreamCause=null) {
+  if (!upstreamCause) {
+    upstreamCause = getBuildCause(hudson.model.Cause.UpstreamCause.class)
+  }
   return upstreamCause.getUpstreamProject()
 }
 
