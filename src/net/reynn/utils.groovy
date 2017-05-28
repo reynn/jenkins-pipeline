@@ -247,6 +247,7 @@ def getUpstreamJobName(upstreamCause=null) {
   if (!upstreamCause) {
     upstreamCause = getBuildCause(hudson.model.Cause.UpstreamCause.class)
   }
+  assert upstreamCause : "Job is not upstream"
   return upstreamCause.getUpstreamProject()
 }
 
