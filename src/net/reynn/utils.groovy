@@ -234,3 +234,19 @@ def debugPrint(title, msgdata, debugMode=null) {
     println "### \u001B[35mEnd Debug\u001B[0m ###"
   }
 }
+
+def getBuildCause() {
+  return currentBuild.rawBuild.getCauses()
+}
+
+def parseJSON(content) {
+  assert content : "parseJSON :: Unable to parse empty content."
+  def json = readJSON text: content
+  return json
+}
+
+def parseYAML(content) {
+  assert content : "parseYAML :: Unable to parse empty content."
+  def yml = readYaml text: content
+  return yml
+}
