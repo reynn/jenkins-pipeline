@@ -164,7 +164,7 @@ def addCredential(folderName, type, credentialData) {
         credId,
         credentialData?.description,
         credentialData?.fileName,
-        credentialData?.secretBytes)
+        (credentialData?.secretBytes as SecretBytes))
     break;
   }
   assert cred : "Unable to create credential based on data provided"
