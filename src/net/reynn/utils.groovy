@@ -256,7 +256,7 @@ def getFileBytes(filePath) {
   assert filePath : "Empty filePath unacceptable"
   def fileExists = fileExists filePath
   if (!fileExists) { error("File :: (${filePath}) does not exist") }
-  return new File(filePath).getBytes()
+  return java.nio.file.Files.readAllBytes(filePath)
 }
 
 /***************************************
