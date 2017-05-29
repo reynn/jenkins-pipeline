@@ -127,7 +127,7 @@ def getCredentialsWithCriteria(criteria) {
   return credential
 }
 
-def addCredentials(folderName, type, credentialData) {
+def addCredential(folderName, type, credentialData) {
   def folder = findFolder(folderName)
   assert folder : "Specified folder not found"
 
