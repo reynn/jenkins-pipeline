@@ -134,7 +134,7 @@ def addCredentials(folderName, type, credentialData) {
   def credId = java.util.UUID.randomUUID().toString()
   Credentials cred = null
   switch(type) {
-    case 'ssh':
+    case 'sshPrivateKey':
       cred = (Credentials)new BasicSSHUserPrivateKey(
         CredentialsScope.GLOBAL,
         credId,
@@ -151,7 +151,7 @@ def addCredentials(folderName, type, credentialData) {
         credentialData?.username,
         credentialData?.password)
     break;
-    case 'secretText':
+    case 'stringCredentials':
       cred = (Credentials)new StringCredentialsImpl(
         CredentialsScope.GLOBAL,
         credId,
@@ -297,4 +297,14 @@ def parseYAML(content) {
   assert content : "parseYAML :: Unable to parse empty content."
   def yml = readYaml text: content
   return yml
+}
+
+def toJSON(contentMap) {
+  assert contentMap : "No Map provided to convert to JSON"
+  def jsonOutput = groovy.json.JsonOutput.toJson(contentMap)
+  return jsonOutput
+}
+
+def toYAML(contentMap) {
+  error("Not implemented yet.")
 }
