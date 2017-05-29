@@ -1,6 +1,7 @@
 package net.reynn
 
 import jenkins.model.*;
+import java.nio.file.*;
 import com.cloudbees.hudson.plugins.folder.*;
 import com.cloudbees.hudson.plugins.folder.properties.*;
 import com.cloudbees.hudson.plugins.folder.properties.FolderCredentialsProvider.FolderCredentialsProperty;
@@ -256,7 +257,8 @@ def getFileBytes(filePath) {
   assert filePath : "Empty filePath unacceptable"
   def fileExists = fileExists filePath
   if (!fileExists) { error("File :: (${filePath}) does not exist") }
-  return java.nio.file.Files.readAllBytes(filePath)
+  def path = Paths.get(filePath)
+  return java.nio.file.Files.readAllBytes(path)
 }
 
 /***************************************
