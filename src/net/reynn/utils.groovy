@@ -17,7 +17,7 @@ Credential Utils
 enum CredentialTypes {
   usernamePassword (com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl),
   sshPrivateKey (com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey),
-  stringCredentials (org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl)
+  stringCredentials (org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl),
   secretFile (org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl)
 
   final Class cValue
