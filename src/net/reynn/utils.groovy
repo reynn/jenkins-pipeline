@@ -9,15 +9,16 @@ import com.cloudbees.plugins.credentials.domains.*;
 import com.cloudbees.plugins.credentials.impl.*;
 import com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey;
 import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl;
+import org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl;
 
-// ########################
-// # Credential Utils
-// ########################
-
+/***************************************
+Credential Utils
+***************************************/
 enum CredentialTypes {
   usernamePassword (com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl),
   sshPrivateKey (com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey),
   stringCredentials (org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl)
+  secretFile (org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl)
 
   final Class cValue
 
@@ -155,7 +156,15 @@ def addCredentials(folderName, type, credentialData) {
         CredentialsScope.GLOBAL,
         credId,
         credentialData?.description,
-        new hudson.util.Secret(credentialData?.secret) )
+        new hudson.util.Secret(credentialData?.secret))
+    break;
+    case 'secretFile':
+      cred = (Credentials)new FileCredentialsImpl(
+        CredentialsScope.GLOBAL,
+        credId,
+        credentialData?.description,
+        credentialData?.fileName,
+        credentialData?.secretBytes)
     break;
   }
   assert cred : "Unable to create credential based on data provided"
@@ -179,36 +188,39 @@ def findFolder(folderName) {
   def parent = null
   def name = null
   if (folderName.contains('/')) {
-    println "findFolder :: splitFolderName :: ${folderName}"
+    debugPrint("findFolder :: splitFolderName :: ${folderName}", "")
     def nameSplit = folderName.split('/')
     parent = nameSplit[0]
     name = nameSplit[1]
     println "FolderSplit(${nameSplit})"
   } else {
-    println "findFolder :: noSplitFolderName :: ${folderName}"
+    debugPrint("findFolder :: noSplitFolderName :: ${folderName}", "")
     name = folderName
   }
   for (folder in Jenkins.getInstance().getAllItems(Folder.class)) {
     if (folder.name.equals(name)) {
-      println "findFolder :: nameMatch :: ${folder.name}"
+      debugPrint("findFolder :: nameMatch :: ${folder.name}", "")
       if (parent) {
         if (parent instanceof com.cloudbees.hudson.plugins.folder.Folder && parent.name.equals(parent)) {
-          println "findFolder :: parentMatch :: ${folder.name}"
+          debugPrint("findFolder :: parentMatch :: ${folder.name}", "")
           return folder
         } else {
-          println "findFolder :: noParentMatch :: ${folder.name}"
+          debugPrint("findFolder :: noParentMatch :: ${folder.name}", "")
         }
       } else {
-        println "findFolder :: noParent :: ${folder.name}"
+        debugPrint("findFolder :: noParent :: ${folder.name}", "")
         return folder
       }
     } else {
-      println "findFolder :: noMatch :: ${folder.name}"
+      debugPrint("findFolder :: noMatch :: ${folder.name}", "")
     }
   }
   return retFolder
 }
 
+/***************************************
+General
+***************************************/
 def isDebug() {
   return env.DebugMode?.toBoolean() ?: false
 }
@@ -224,17 +236,32 @@ def debugPrint(title, msgdata, debugMode=null) {
   }
   if (debugMode) {
     println "### \u001B[35mDebug output for $title\u001B[0m ###"
-    if (msgdata instanceof Map) {
-      for (data in msgdata) {
-        println "### \u001B[35mDebug >>> ${data.key}: ${data.value}\u001B[0m"
+    if (msgdata) {
+      if (msgdata instanceof Map) {
+        for (data in msgdata) {
+          println "### \u001B[35mDebug >>> ${data.key}: ${data.value}\u001B[0m"
+        }
+      } else {
+        println msgdata
       }
-    } else {
-      println msgdata
     }
     println "### \u001B[35mEnd Debug\u001B[0m ###"
   }
 }
 
+/***************************************
+File Utilities
+***************************************/
+def getFileBytes(filePath) {
+  assert filePath : "Empty filePath unacceptable"
+  def fileExists = fileExists filePath
+  if (!fileExists) { error("File :: (${filePath}) does not exist") }
+  return new File(filePath).getBytes()
+}
+
+/***************************************
+Job Utilities
+***************************************/
 def getBuildCause(causeClass) {
   if (causeClass) {
     return currentBuild.rawBuild.getCause(causeClass)
@@ -251,6 +278,9 @@ def getUpstreamJobName(upstreamCause=null) {
   return upstreamCause.getUpstreamProject()
 }
 
+/***************************************
+Parsing
+***************************************/
 def parseJSON(content) {
   assert content : "parseJSON :: Unable to parse empty content."
   def json = readJSON text: content
