@@ -7,6 +7,7 @@ def call(Closure body) {
       } catch (e) {
         throw e
       } finally {
+        // Why you fail Jenkins
         dir(ws) {
           deleteDir()
         }
