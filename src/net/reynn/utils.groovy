@@ -314,7 +314,5 @@ def toYAML(contentMap) {
 Replacements
 ***************************************/
 def getEnv() {
-  env.each {
-    print it.key
-  }
+  return env.getEnvironment()
 }
