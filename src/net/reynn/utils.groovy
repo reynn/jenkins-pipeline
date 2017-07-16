@@ -78,10 +78,11 @@ def getCredentialsWithCriteria(criteria) {
       jenkins.model.Jenkins.instance)
   // Get credentials for the folder that the job is in
   java.util.ArrayList folderCreds = new java.util.ArrayList()
-  def folders = env.JOB_NAME ?: ""
-  for(p in folders.split('/')) {
-    for(n in getFolderCredentials(p)) {
-      folderCreds << n
+  def folders = (env.JOB_NAME ?: "").split('/')
+  for (i = 0; i < folders.size(); i++) {
+    folderName = folders[0..i].join('/')
+    for(cred in getFolderCredentials(folderName)) {
+      folderCreds << cred
       debugPrint("getCredentialsWithCriteria :: Folder Credentials: ", folderCreds)
     }
   }
@@ -307,4 +308,11 @@ def toJSON(contentMap) {
 
 def toYAML(contentMap) {
   error("Not implemented yet.")
+}
+
+/***************************************
+Replacements
+***************************************/
+def getEnv() {
+  return env
 }
